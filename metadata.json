@@ -1,0 +1,8 @@
+{
+  "name": "Copy of Momentum: Async Team Flow",
+  "description": "A high-velocity, lightweight task management app designed to eliminate status meetings through async updates and AI-powered team insights.",
+  "requestFramePermissions": [
+    "camera",
+    "microphone"
+  ]
+}
