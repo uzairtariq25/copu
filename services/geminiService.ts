@@ -2,45 +2,38 @@
 import { GoogleGenAI } from "@google/genai";
 import { Task, AsyncUpdate, User } from "../types";
 
-// Always use process.env.API_KEY directly for initialization as per guidelines
 const ai = new GoogleGenAI({ apiKey: process.env.API_KEY });
 
 export async function getTeamPulse(tasks: Task[], updates: AsyncUpdate[], members: User[]) {
   try {
     const prompt = `
-      Act as a Chief Product Officer. Analyze the following team data and provide a concise "Team Pulse" summary.
+      Act as a world-class Chief Product Officer (CPO). Your goal is to provide a "Momentum Check" for the team based on raw data.
       
-      TEAM MEMBERS:
-      ${JSON.stringify(members)}
+      CONTEXT:
+      - Team Members: ${members.map(m => `${m.name} (${m.role})`).join(', ')}
+      - Active Tasks: ${JSON.stringify(tasks)}
+      - Latest Async Updates: ${JSON.stringify(updates)}
       
-      ACTIVE TASKS:
-      ${JSON.stringify(tasks)}
+      OUTPUT FORMAT:
+      Provide a highly professional summary in 3 distinct sections:
+      🚀 MOMENTUM: How much progress was made in the last 24h?
+      ⚠️ RISKS: Identify any bottlenecks or specific tasks that are stalling.
+      🎯 FOCUS: What should the team prioritize in the next 4 hours to maximize impact?
       
-      LATEST UPDATES:
-      ${JSON.stringify(updates)}
-      
-      Provide your response in 3 short bullet points:
-      1. Momentum Check (How fast are we moving?)
-      2. Priority Alert (What's being ignored?)
-      3. Blockers & Action Items (Who needs help right now?)
-      
-      Keep it professional yet encouraging.
+      Tone: Assertive, data-driven, and inspiring. Avoid fluff.
     `;
 
-    // Using gemini-3-flash-preview for basic text tasks as per guidelines
     const response = await ai.models.generateContent({
       model: 'gemini-3-flash-preview',
       contents: prompt,
       config: {
-        temperature: 0.7,
-        // Removed maxOutputTokens to follow guidelines recommending avoidance unless paired with thinkingBudget
+        temperature: 0.65,
       }
     });
 
-    // Access the .text property directly (not as a method)
-    return response.text || "Unable to generate pulse at this time.";
+    return response.text || "Momentum report currently unavailable.";
   } catch (error) {
     console.error("Gemini Pulse Error:", error);
-    return "Error connecting to AI advisor. Please try again later.";
+    return "The AI advisor is currently offline. Review the board manually for risks.";
   }
 }
